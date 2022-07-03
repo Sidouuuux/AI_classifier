@@ -44,7 +44,7 @@ def showWeights(mlp):
 if __name__ == "__main__":
     filename = "mnist_784_light.csv"
     data = loadData(filename)
-
+    print(data)
     inputs = data[:, :-1]  # Toutes les lignes, sauf la dernière colonne
     desired = data[:, -1]  # Toutes les lignes, juste la dernière colonne
 
@@ -78,7 +78,7 @@ if __name__ == "__main__":
     # Score d'apprentissage de régression
     print(f'Training score : {train_score * 100:.2f}%')
     print(f'Test score     : {test_score * 100:.2f}%')  # Score de test
-
+    print(test_inputs[0])
     print(mlp.predict([test_inputs[0]]))
     print(mlp.predict_proba([test_inputs[0]]))
     # showSample(test_inputs[0]) #Affichage d'un échantillon
