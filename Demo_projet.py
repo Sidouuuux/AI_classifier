@@ -42,7 +42,8 @@ if __name__ == "__main__":
     # print(new_list = list(set(my_list))
 
     dataInputs = []
-    for i in range(1, 2000):
+    print(len(filenames))
+    for i in range(len(filenames)):
 
         print(f'{str(i)} : {filename}')
 
@@ -53,10 +54,11 @@ if __name__ == "__main__":
 
         example = skimage.io.imread(filename)
         example = skimage.transform.resize(
-            example, (IMAGE_REDUCED_SIZE, IMAGE_REDUCED_SIZE))
+            example, (IMAGE_REDUCED_SIZE, IMAGE_REDUCED_SIZE,3))
 
         # showImage(example)
-        # print(sys.getsizeof(dataInputs))
+        print(type(example))
+        print(example.shape)
         line = example[:, :, 0].reshape(1, -1)
         dataInputs.append(line[0])
         example = []
@@ -67,14 +69,13 @@ if __name__ == "__main__":
     # showImage(example)
     print("LET'S BEGIIIIN")
     dataInputs = np.array(dataInputs)
-    print(len(classes))
-    print(len(dataInputs))
+    # print(len(classes))
+    # print(len(dataInputs))
     train_inputs, test_inputs, \
         train_desired, test_desired = train_test_split(
             dataInputs, classes, test_size=0.20)
     # print(dataInputs)
-    mlp = MLPClassifier(max_iter=500, learning_rate_init=.007,
-                        verbose=True)  # A vous !
+    mlp = MLPClassifier(max_iter=500, learning_rate_init=.004)  # A vous !
     # --------------------------------------------------------------------------------------
     mlp.fit(train_inputs, train_desired)  # Apprentissage
     # parameter_space = {
@@ -99,8 +100,8 @@ if __name__ == "__main__":
     print(f'Test score     : {test_score * 100:.2f}%')  # Score de test
     with open(FILENAME, 'wb') as file:
         pickle.dump(mlp, file)
-    print(mlp.loss_)
-    print(test_inputs[0])
+    # print(mlp.loss_)
+    # print(test_inputs[0])
     print(mlp.predict([test_inputs[0]]))
     print(mlp.predict_proba([test_inputs[0]]))
     fig, ax = plt.subplots()
