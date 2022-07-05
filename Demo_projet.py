@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from tqdm import tqdm
-
+import time
 from sklearn.neural_network import MLPRegressor
 from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import confusion_matrix
@@ -53,7 +53,7 @@ def getData(_image_folder=FOLDER, _reduce_to=IMAGE_REDUCED_SIZE, _data=DATA_SIZE
         data = np.load(numpy_file)
         # print(len(classes))
         # print(set(classes))
-        # print(len(set(classes)))
+        print(len(set(classes)))
         return data, classes
 
     else:
@@ -75,6 +75,7 @@ def getData(_image_folder=FOLDER, _reduce_to=IMAGE_REDUCED_SIZE, _data=DATA_SIZE
 
 
 if __name__ == "__main__":
+    t0 = time.time()
 
     dataInputs, classes = getData()
     print(len(dataInputs))
@@ -85,18 +86,18 @@ if __name__ == "__main__":
         train_desired, test_desired = train_test_split(
             dataInputs, classes, test_size=0.20)
     # print(dataInputs)
-    # mlp = MLPClassifier(max_iter=500, learning_rate_init=.1)  # A vous !
+    # mlp = MLPClassifier(learning_rate_init=.000001,
+    #                     max_iter=3000, hidden_layer_sizes=(15,))  # A vous !
     # --------------------------------------------------------------------------------------
     # mlp.fit(train_inputs, train_desired)  # Apprentissage
     parameter_space = {
         'hidden_layer_sizes': [
-            (1,), (2,), (3,), (4,), (5,), (6,), (7,), (8,), (9,), (10,), (11,
-                                                                          ), (12,), (13,), (14,), (15,), (16,), (17,), (18,), (19,), (20,), (21,)
+            (1,), (2,), (3,), (4,), (5,), (6,), (7,), (8,), (9,), (10,),
+            (11,), (12,), (13,), (14,), (15,), (16,), (17,), (18,),
+            (19,), (20,), (21,)
         ],
-        'activation': ['tanh', 'relu', 'identity', 'logistic'],
-        # 'solver': ['sgd', 'adam', 'lbfgs', 'sgd'],
-        'alpha': [0.0001, 0.05],
-        'learning_rate': ['constant', 'adaptive'],
+        'max_iter': [1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000],
+        'learning_rate_init': [0.1, 0.01, 0.001, 0.0001, 0.00001, 0.000001],
     }
     clf = GridSearchCV(MLPClassifier(), parameter_space, cv=3,
                        scoring='accuracy')
@@ -107,13 +108,19 @@ if __name__ == "__main__":
     test_score = clf.score(test_inputs, test_desired)
     # Score d'apprentissage de régression
     print(f'Training score : {train_score * 100:.2f}%')
-    print(f'Test score     : {test_score * 100:.2f}%')  # Score de test
+    print(f'Test score     : {test_score * 100:.2f}%')
+
     with open(FILENAME, 'wb') as file:
         pickle.dump(clf, file)
-    # print(mlp.loss_)
+    t1 = time.time()
+
+    # print(clf.loss_)
     # print(test_inputs[0])
     print(clf.predict([test_inputs[0]]))
     print(clf.predict_proba([test_inputs[0]]))
+    print("time : ")
+    print(t1-t0)
+    print("learning_rate_init=.007, activation=identity, alpha=0.05, hidden_layer_sizes=(15,), learning_rate=constant")
     fig, ax = plt.subplots()
     ax.plot(clf.loss_curve_)
     plt.yscale('log')

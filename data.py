@@ -49,6 +49,7 @@ else:
 
 s = np.arange(animals.shape[0])
 np.random.shuffle(s)
+print(s)
 animals = animals[s]
 labels = labels[s]
 num_classes = len(np.unique(labels))
